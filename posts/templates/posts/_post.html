@@ -1,0 +1,75 @@
+{% load bootstrap4 %}
+
+<div class="card my-5">
+  <div class="card-header">
+    <a href="{% url 'accounts:user_page' post.user.username %}">
+      <h5 class="card-text">{{post.user}}</h5>
+    </a>
+  </div>
+  {% if post.image_set %}
+      <div id="post{{post.id}}" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner">
+        {%for image in post.image_set.all %}
+        <div class="carousel-item {% if forloop.counter == 1 %} active {% endif %}">
+          <img src="{{image.img.url}}" class="d-block w-100" alt="Image is not found">
+        </div>
+        {% endfor %}
+      </div>
+      <a class="carousel-control-prev" href="#post{{post.id}}" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#post{{post.id}}" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+      
+    </div>
+  
+  {% else %}
+    <img src="" class="card-img-top" alt="Not upload">
+  {% endif %}
+  <div class="card-body">
+    <p class="card-text"><strong>{{post.user}}</strong> {{post.content}}</p>
+    <div>
+      <!--like start-->
+      {% if user in post.likes.all %}
+        <a href="{% url 'posts:like' post.id %}"><i class="fas fa-heart"></i></a>
+      {% else %}
+        <a href="{% url 'posts:like' post.id %}"><i class="far fa-heart"></i></a>
+      {% endif %}좋아요 {{post.likes.count}}개
+      <!--like end-->
+    </div>
+  <!--post.user는 작성자, user는 지금 접속한 사람-->
+  {% if post.user == user %}
+    <a class="btn btn-warning" href="{% url 'posts:update' post.id %}">Update</a>
+    <a class="btn btn-danger" href="{% url 'posts:delete' post.id %}">delete</a>
+  {% endif %}
+  </div>
+
+  <div class="card-body">
+    {% for comment in post.comment_set.all %}
+      <div class="">
+        <p class="card-text"><strong>{{comment.user}}</strong> {{comment.content}} {{comment.content_at}}
+      {% if comment.user == user %}
+        <a class="btn" href="">Update</a>
+        <a class="btn" href="{% url 'posts:comment_delete' post.id comment.id %}">delete</a>
+      {% endif %}
+        </p>
+      </div>
+    {% empty %}
+      <p class="card-text">댓글이 없습니다.</p>
+    {% endfor %}
+  </div>
+  
+  <div class = "card-body">
+    <!-- form을 보여주는 페이지와 처리하는 페이지가 다르기에 적어주어야한다. -->
+    <form class="form-inline" action="{% url 'posts:comment_create' post.id %}" method="POST">
+      {% csrf_token %}
+        
+      {% bootstrap_form comment_form show_label=False %}
+      <input type="submit" value="Submit"/>
+    </form>
+  </div>
+  
+</div>
