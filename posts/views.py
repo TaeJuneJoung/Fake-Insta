@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import PostForm, ImageForm, CommentForm
-from .models import Post, Comment
+from .models import Post, Comment, Hashtag
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST #POST방식으로만 받겠다는 것, GET방식이면 405를 보냄
 
@@ -32,6 +32,17 @@ def new(request):
             post = post_form.save(commit=False)
             post.user = request.user
             post.save()
+            
+            ###Hashtag 기능 추가 - post객체가 있고 m2m을 해야한다
+            #is_valid()된 거에서 cleaned_data를 가져와서 접근하면 된다.
+            content = post_form.cleaned_data.get('content')
+            content_words = content.split()
+            for word in content_words:
+                if word[0] == "#":
+                    tag = Hashtag.objects.get_or_create(content=word)#get_or_create -> 가져오거나 생성하거나
+                    # if tag[1]: #이작업이 필요없음 알아서 해줌(?)
+                    post.hashtags.add(tag[0])
+            ###Hashtag 기능 끝
             
             #다중사진을 처리하기 위해 for문
             for image in request.FILES.getlist('img'):
@@ -67,6 +78,21 @@ def update(request, id):
             post_form = PostForm(request.POST, instance=post) #instance를 이용하여 update라는 것을 알려줌
             if post_form.is_valid():
                 post = post_form.save()
+                
+                ###Hashtag 기능 추가 - post객체가 있고 m2m을 해야한다
+                #update에서 이전의 것을 다 지우고 새로 만듬
+                #tag[1]을 통해서 이전의것에서 분기처리해도 됨
+                post.hashtags.clear()
+                #is_valid()된 거에서 cleaned_data를 가져와서 접근하면 된다.
+                content = post_form.cleaned_data.get('content')
+                content_words = content.split()
+                for word in content_words:
+                    if word[0] == "#":
+                        tag = Hashtag.objects.get_or_create(content=word)#get_or_create -> 가져오거나 생성하거나
+                        # if tag[1]: #add인것을 보면 dict나 set이기에 중복시 되지 않으니 괜찮음.
+                        post.hashtags.add(tag[0])
+            ###Hashtag 기능 끝
+                
                 return redirect("posts:list")
         else:
             post_form = PostForm(instance=post)
