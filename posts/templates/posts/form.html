@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
 {% block base %}
-    <form action="" method="POST" accept="image/gif,image/jpeg" enctype= multipart/form-data>
+    <form action="" method="POST" accept="image/gif,image/jpeg" enctype="multipart/form-data">
         {% csrf_token %}
         {% bootstrap_form post_form %}
         {% if image_form %}

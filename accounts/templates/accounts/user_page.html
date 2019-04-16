@@ -2,23 +2,36 @@
 {% block base %}
     <!--사용자 정보 출력 시작-->
     <div class="row">
-        <div class="col-4">
+        <div class="col-4 d-flex justify-content-center">
             <!--프로필 이미지-->
+            {% if user_info.profile_image %}
+                <img class="rounded-circle" src="{{user_info.profile_image.url}}">
+            {% else %}
+                <!--기본이미지 - 사진이 없을 때-->
+                <img class="rounded-circle" src="/media/accounts/images/default.jpg">
+            {% endif %}
         </div>
         <div class="col-8">
             <!--유저 정보-->
-            <h1>{{ user_info.username }}</h1>
+            <h1 class=inline>{{ user_info.username }}</h1>
             {% if user != user_info %}
                 {% if user in user_info.followers.all %}
                     <a class="btn btn-light" href="{% url 'accounts:follow' user_info.username %}">팔로잉</a>
                 {% else %}
                     <a class="btn btn-primary" href="{% url 'accounts:follow' user_info.username %}">팔로우</a>
                 {% endif %}
+            {% else %}
+                    <a class="btn btn-light" href="{% url 'accounts:edit_profile' user.username %}">프로필수정</a>
             {% endif %}
             <p>팔로잉 {{user_info.followings.count}}</p>
             <p>팔로워 {{user_info.followers.count}}</p>
         </div>
     </div>
+            <div class="row">
+                <div class="col-6 offset-4">
+                    <p>{{user_info.introduce}}</p>
+                </div>
+            </div>
     <!--사용자 정보 출력 끝-->
     <!--작성글 출력 시작-->
     <div class="card-columns">

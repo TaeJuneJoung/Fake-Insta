@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from .forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 from posts.forms import CommentForm
 
 # Create your views here.
@@ -43,6 +43,20 @@ def user_page(request, id):
     user = request.user
     comment_form = CommentForm()
     return render(request, "accounts/user_page.html", {"user_info":user_info, "user":user, "comment_form":comment_form})
+
+@login_required
+def edit_profile(request, id):
+    if request.user.username == id:
+        User = get_user_model()
+        user = User.objects.get(username=id)
+        if request.method == "POST":
+            form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
+            if form.is_valid():
+                form.save()
+                return redirect("accounts:user_page", id)
+        else:
+            form = CustomUserChangeForm(instance=user)
+        return render(request, "accounts/form.html", {"form":form})
 
 @login_required
 def follow(request, id):

@@ -20,7 +20,7 @@ class Image(models.Model):
             format='JPEG',
             options={'quality':100},
         )
-    def __Str__(self):
+    def __str__(self):
         return self.img
 
 class Comment(models.Model):
