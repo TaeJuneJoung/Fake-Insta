@@ -1,5 +1,5 @@
 {% load bootstrap4 %}
-
+{% load post_templatetags %}
 <div class="card my-5">
   <div class="card-header">
     <a href="{% url 'accounts:user_page' post.user.username %}">
@@ -30,7 +30,7 @@
     <img src="" class="card-img-top" alt="Not upload">
   {% endif %}
   <div class="card-body">
-    <p class="card-text"><strong>{{post.user}}</strong> {{post.content}}</p>
+    <p class="card-text"><strong>{{post.user}}</strong> {{post|hashtag_link|safe}}</p><!--  hashtag_link(post)와 같은 표현이지만 -->
     <div>
       <!--like start-->
       {% if user in post.likes.all %}

@@ -37,6 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.naver',
     'bootstrap4',
     'imagekit',
     'posts',
@@ -128,3 +135,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #User 커스터마이징하기 위한
 AUTH_USER_MODEL = 'accounts.User'
+
+#allauth를 위한 설정
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+#allauth를 위한 설정
+SITE_ID = 1
+
+#login이 되면 어디로 보낼지 보내는 설정
+LOGIN_REDIRECT_URL = "posts:list"

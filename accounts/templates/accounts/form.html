@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
+<!--allauth를 쓰기 위한 방법-->
+{% load socialaccount %}
 {% block base %}
         
         <!--<h1>{{title}}</h1>-->
@@ -17,5 +19,12 @@
         {% bootstrap_form form %}
         <input class="btn btn-outline-success" type="submit" value="Submit"/>
     </form>
+    
+    <!-- 카카오 로그인 방법 -->
+    {% if request.resolver_match.url_name == 'login' %}
+        <a href="{% provider_login_url 'kakao' method='oauth2' %}">Kakao_login</a>
+        <a href="{% provider_login_url 'google' method='oauth2' %}">Google</a>
+        <a href="{% provider_login_url 'naver' method='oauth2' %}">Naver</a>
+    {% endif %}
 
 {% endblock %}

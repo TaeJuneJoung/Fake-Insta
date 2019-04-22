@@ -146,3 +146,10 @@ def like(request, id):
     else:
         post.likes.add(user)
     return redirect("posts:list")
+    
+def hashtag(request, id):
+    hashtag = Hashtag.objects.get(pk=id)
+    posts = hashtag.post_set.all()
+    comment_form = CommentForm()
+    
+    return render(request, 'posts/index.html', {"posts":posts, "comment_form":comment_form, "hashtag":hashtag})

@@ -13,4 +13,6 @@ urlpatterns = [
     
     #like로 잡는 이유는 기능상 create와 delete기능을 두개를 동시 작업할 것이기에.
     path('<int:id>/like/', views.like, name='like'),
+    
+    path('hashtag/<int:id>/', views.hashtag, name='hashtag'),
 ]
